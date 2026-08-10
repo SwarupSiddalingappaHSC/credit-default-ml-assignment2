@@ -28,8 +28,7 @@ Predicting which credit card clients are likely to default on their payment is a
 
 ## c. GitHub Repository Link
 
-**`[PASTE YOUR GITHUB REPO LINK HERE AFTER YOU PUSH THE CODE]`**
-*(See the setup instructions provided separately for how to create this repo and get the link.)*
+[credit-default-ml-assignment2](https://github.com/SwarupSiddalingappaHSC/credit-default-ml-assignment2) 
 
 ## d. Models Used
 
@@ -93,8 +92,7 @@ streamlit run app.py          # launches the interactive demo locally
 
 ## Live Streamlit App Link
 
-**`[PASTE YOUR DEPLOYED STREAMLIT APP LINK HERE]`**
-
+[Open the deployed Streamlit app](https://credit-default-ml-assignment2-g9s9j3ghdsrebqqb6zwjmu.streamlit.app/)
 ## Streamlit App Features
 
 - **Dataset upload (CSV):** upload `test_data.csv` (or any CSV with the same 23 feature columns, with or without the `Default` column) from the sidebar.
