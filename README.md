@@ -7,20 +7,20 @@
 
 ## a. Problem Statement
 
-Predicting which credit card clients are likely to default on their payment is a core risk-management problem for any bank or card issuer — catching high-risk clients early lets the bank adjust credit limits or follow up before a missed payment happens. The goal of this assignment is to build and compare multiple classification models that predict, from a client's demographic profile, credit limit, and their last 6 months of billing and repayment history, **whether that client will default on their payment next month (Yes) or not (No)** — a binary classification problem.
+Predicting which credit card clients are likely to default on their payment is a core risk-management problem for banks and card issuers. Catching high-risk clients early lets a bank adjust credit limits or follow up before a payment is missed. This assignment builds and compares multiple classification models that predict, from a client's demographic profile, credit limit, and their last 6 months of billing and repayment history, whether that client will default on their payment next month. This is a binary classification problem (`Default`: Yes or No).
 
 ## b. Dataset Description
 
 - **Name:** Default of Credit Card Clients
 - **Source:** [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients) (Yeh, I. C., & Lien, C. H., 2009 — originally collected from a bank in Taiwan; also available on Kaggle as "Default of Credit Card Clients Dataset")
-- **Instances:** 30,000 credit card clients (assignment minimum: 500 ✅ — 60x over)
-- **Features:** 23 predictive features after dropping the unique `ID` column (assignment minimum: 12 ✅):
+- **Instances:** 30,000 credit card clients (assignment minimum is 500, so this is 60x over)
+- **Features:** 23 predictive features after dropping the unique `ID` column (assignment minimum is 12):
   - **Demographic:** SEX, EDUCATION, MARRIAGE, AGE
   - **Credit information:** LIMIT_BAL (credit limit)
   - **Repayment history (6 months):** PAY_1 – PAY_6 (repayment status each month)
   - **Billing history (6 months):** BILL_AMT1 – BILL_AMT6 (bill statement amount each month)
   - **Payment history (6 months):** PAY_AMT1 – PAY_AMT6 (amount paid each month)
-- **Target:** `Default` (Yes / No) — binary classification. Class balance is ~22% Yes (will default) / 78% No, moderately imbalanced, which is why MCC and F1 matter here in addition to Accuracy.
+- **Target:** `Default` (Yes / No), binary classification. Class balance is ~22% Yes (will default) and 78% No. The data is moderately imbalanced, so MCC and F1 are tracked alongside Accuracy.
 - **Cleaning applied:**
   - Dropped `ID` (unique identifier, not predictive).
   - Renamed `PAY_0` → `PAY_1` so the six repayment-status columns are consistently numbered.
@@ -28,11 +28,11 @@ Predicting which credit card clients are likely to default on their payment is a
 
 ## c. GitHub Repository Link
 
-[credit-default-ml-assignment2](https://github.com/SwarupSiddalingappaHSC/credit-default-ml-assignment2) 
+[credit-default-ml-assignment2](https://github.com/SwarupSiddalingappaHSC/credit-default-ml-assignment2)
 
 ## d. Models Used
 
-All 5 models below were trained on the **same dataset**, using the **same 80/20 train-test split** (`random_state=42`, stratified) and the **same preprocessing** (StandardScaler on the 20 numeric/ordinal features, OneHotEncoder on the 3 categorical features — SEX, EDUCATION, MARRIAGE), so the comparison is fair.
+All 5 models were trained on the same dataset, with the same 80/20 train-test split (`random_state=42`, stratified) and the same preprocessing: StandardScaler on the 20 numeric/ordinal features, OneHotEncoder on the 3 categorical features (SEX, EDUCATION, MARRIAGE). This keeps the comparison fair.
 
 ### Comparison Table
 
@@ -50,12 +50,12 @@ All 5 models below were trained on the **same dataset**, using the **same 80/20 
 
 | ML Model Name | Observation about model performance |
 |---|---|
-| Logistic Regression | Highest **Precision (0.6923)** — when it predicts a default, it's usually right — but the lowest Recall (0.2442) of the strong models, meaning it misses a lot of actual defaulters. The linear decision boundary is conservative on this imbalanced target. |
-| Decision Tree | Second-best Accuracy (0.8157) and AUC (0.7441), with noticeably better Recall than Logistic Regression. A single tree is more flexible than a linear model here, but still less stable than an ensemble. |
-| kNN | Sits in the middle across every metric. Benefits from the `StandardScaler` step (distance-based models need scaled inputs) but is affected by the "curse of dimensionality" from one-hot encoding plus 20 numeric columns. |
-| Naive Bayes | Lowest Accuracy and Precision, but by far the **highest Recall (0.6805)** — it flags far more clients as high-risk, including many false positives. Its independence assumption is heavily violated here (the 6 `BILL_AMT` columns are highly correlated with each other, as are the 6 `PAY_*` columns), which biases it toward the minority ("will default") class. Useful for a bank that prefers to over-flag risk rather than miss a defaulter. |
-| Random Forest (Ensemble) | **Best overall** — highest Accuracy (0.8167) and AUC (0.7752). Averaging 300 decision trees smooths out the overfitting seen in the single Decision Tree, giving the most reliable all-round performance. |
-| **Overall Winner for this dataset** | **Random Forest (Ensemble)** — best Accuracy and AUC, and a strong MCC, making it the most balanced choice overall. For a bank that specifically wants to **catch more future defaulters even at the cost of false alarms**, Naive Bayes' much higher Recall would be the pragmatic choice instead. |
+| Logistic Regression | Precision is the best of all 5 models at 0.6923, so its default predictions are usually correct. Recall is weak at 0.2442, though, so it misses most actual defaulters. The linear boundary stays conservative on this imbalanced target. |
+| Decision Tree | Accuracy (0.8157) and AUC (0.7441) are the second-best in the group. Recall is noticeably better than Logistic Regression. A single tree fits the data more flexibly than a linear model, though it's still less stable than an ensemble of trees. |
+| kNN | Metrics land in the middle of the pack across the board. The `StandardScaler` step helps, since distance-based models need scaled inputs, but the curse of dimensionality (20 numeric columns plus one-hot encoded categories) still limits performance. |
+| Naive Bayes | Accuracy and Precision are the lowest of the 5 models, but Recall is the highest at 0.6805. It flags many more clients as high-risk, including a lot of false positives. This happens because the independence assumption breaks down badly here: the 6 `BILL_AMT` columns are correlated with each other, and so are the 6 `PAY_*` columns. For a bank that would rather over-flag risk than miss a defaulter, this model has an advantage. |
+| Random Forest (Ensemble) | Accuracy (0.8167) and AUC (0.7752) are the best of the 5 models. Averaging 300 decision trees smooths out the overfitting a single tree shows, and gives the most reliable performance overall. |
+| **Overall Winner for this dataset** | **Random Forest (Ensemble)**, based on the best Accuracy, AUC, and a strong MCC. If the priority shifts to catching as many future defaulters as possible, even at the cost of more false alarms, Naive Bayes' much higher Recall makes it the more practical pick instead. |
 
 ---
 
@@ -93,6 +93,7 @@ streamlit run app.py          # launches the interactive demo locally
 ## Live Streamlit App Link
 
 [Open the deployed Streamlit app](https://credit-default-ml-assignment2-g9s9j3ghdsrebqqb6zwjmu.streamlit.app/)
+
 ## Streamlit App Features
 
 - **Dataset upload (CSV):** upload `test_data.csv` (or any CSV with the same 23 feature columns, with or without the `Default` column) from the sidebar.
